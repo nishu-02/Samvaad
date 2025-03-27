@@ -1,33 +1,28 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Layout, Button, Text } from '@ui-kitten/components';
-import { useThemeStore } from '../global/themeStore';
+import React from "react";
+import { SafeAreaView, View } from "react-native";
+import { Toggle, Text, Button } from "@ui-kitten/components";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../global/themeSlice";
 
 const Settings = () => {
-  const { theme, toggleTheme } = useThemeStore(); 
+  const { colors, dark } = useSelector((state) => state.theme.theme);
+  const dispatch = useDispatch();
 
   return (
-    <Layout style={styles.container}>
-      <Text category="h4" style={styles.heading}>
-        Settings
-      </Text>
-      <Button onPress={toggleTheme}>
-        Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background, padding: 20 }}>
+      <Text category="h5" style={{ color: colors.text }}>Settings</Text>
+
+      <Toggle checked={dark} onChange={() => dispatch(toggleTheme())} style={{ marginVertical: 10 }}>
+        {(evaProps) => <Text {...evaProps} style={{ color: colors.text }}>
+          {dark ? "Dark Mode" : "Light Mode"}
+        </Text>}
+      </Toggle>
+
+      <Button style={{ backgroundColor: colors.primary, borderColor: colors.primary }}>
+        Change Password
       </Button>
-    </Layout>
+    </SafeAreaView>
   );
 };
 
 export default Settings;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  heading: {
-    marginBottom: 20,
-  },
-});
