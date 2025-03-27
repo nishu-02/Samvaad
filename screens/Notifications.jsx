@@ -1,26 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Toggle, Text } from "@ui-kitten/components";
+import { Switch, Text, List, Divider } from "react-native-paper";
 import { useSelector } from "react-redux";
 
 const Notifications = () => {
   const { colors } = useSelector((state) => state.theme.theme);
 
+  // State for toggles
+  const [privateChats, setPrivateChats] = useState(false);
+  const [groupChats, setGroupChats] = useState(false);
+  const [doNotDisturb, setDoNotDisturb] = useState(false);
+
   return (
     <SafeAreaView style={{ flex: 1, padding: 20, backgroundColor: colors.background }}>
-      <Text category="h5" style={{ color: colors.text }}>Message Notifications</Text>
+      <Text variant="titleLarge" style={{ color: colors.text, marginBottom: 10 }}>
+        Message Notifications
+      </Text>
 
-      <Toggle style={{ marginVertical: 10 }}>
-        {(evaProps) => <Text {...evaProps} style={{ color: colors.text }}>Private Chats</Text>}
-      </Toggle>
+      <List.Item
+        title="Private Chats"
+        titleStyle={{ color: colors.text }}
+        right={() => <Switch value={privateChats} onValueChange={setPrivateChats} />}
+      />
+      <Divider />
 
-      <Toggle style={{ marginVertical: 10 }}>
-        {(evaProps) => <Text {...evaProps} style={{ color: colors.text }}>Group Chats</Text>}
-      </Toggle>
+      <List.Item
+        title="Group Chats"
+        titleStyle={{ color: colors.text }}
+        right={() => <Switch value={groupChats} onValueChange={setGroupChats} />}
+      />
+      <Divider />
 
-      <Toggle style={{ marginVertical: 10 }}>
-        {(evaProps) => <Text {...evaProps} style={{ color: colors.text }}>Do Not Disturb</Text>}
-      </Toggle>
+      <List.Item
+        title="Do Not Disturb"
+        titleStyle={{ color: colors.text }}
+        right={() => <Switch value={doNotDisturb} onValueChange={setDoNotDisturb} />}
+      />
+      <Divider />
     </SafeAreaView>
   );
 };
