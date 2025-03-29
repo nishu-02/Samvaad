@@ -1,12 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-const ChatListScreen = () => {
+import MyFAB from './components/MyComponent'
+const ChatListScreen = ({ navigation }) => {
   return (
-    <View>
-      <Text>ChatListScreen</Text>
-    </View>
-  )
+    <SafeAreaView>
+      <Text>is it working as the way it was intended</Text>
+      <MyFAB navigation={navigation}/>
+    </SafeAreaView>
+  );
 }
 
 export default ChatListScreen

@@ -25,7 +25,7 @@ const AppNavigator = () => {
         <>
           <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: false }} />
+          <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: true }} />
           <Stack.Screen name="FriendProfile" component={FriendProfile} options={{ headerShown: false }} />
           <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
         </>

@@ -1,22 +1,41 @@
-import { Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "react-native-paper";
+
+import useAuthStore from "../global/useAuthstore";
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    //with the firebase
+  const login = useAuthStore((state) => state.login);
+  const error = useAuthStore((state) => state.error);
+  const loading = useAuthStore((state) => state.loading);
+
+  const handleLogin = async () => {
+    try {
+      await login(username, password);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.label}>Enter your username:</Text>
-      
+      <View style={styles.heading}>
+        <Text style={styles.headingText}>Welcome!</Text>
+      </View>
+      <Text style={styles.label}>Enter your Email:</Text>
+
       <TextInput
-        placeholder="Enter your username"
+        placeholder="Enter your Email"
         onChangeText={(text) => setUsername(text)}
         value={username}
         style={styles.input}
@@ -24,17 +43,22 @@ const LoginScreen = () => {
 
       <Text style={styles.label}>Enter your password</Text>
       <TextInput
-      placeholder='Do you remember it...'
-      onChangeText={(text) => setPassword(text)}
-      value={password}
-      style={styles.input}
+        placeholder="Do you remember it..."
+        onChangeText={(text) => setPassword(text)}
+        value={password}
+        secureTextEntry={true}
+        style={styles.input}
       />
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text>
-        let's begin samvaad
-        </Text>
-        </TouchableOpacity>
+      <Button
+        icon="login"
+        mode="contained"
+        onPress={handleLogin}
+        theme={{ colors: { primary: "thistle" } }}
+        style={{ marginTop: 16 }}
+      >
+        Let's begin samvaad
+      </Button>
     </SafeAreaView>
   );
 };
@@ -43,29 +67,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
+    justifyContent: "center",
+    backgroundColor: "beige",
   },
   label: {
+    paddingLeft: 10,
     fontSize: 16,
     marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 10,
-    borderRadius: 5,
-    marginBottom: 15,
+    borderRadius: 16,
+    marginBottom: 20,
+    height: 50,
   },
   loginButton: {
-    height:100,
-    width:100,
-    backgroundColor:'teal',
-    borderRadius:23,
-    borderWidth:1,
-    borderColor:'black',
-    justifyContent:'center',
-    alignContent:'center',
-  }
+    height: 100,
+    width: 100,
+    backgroundColor: "teal",
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: "black",
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  heading: {
+    height: 100,
+    justifyContent: "center",
+    alignContent: "center",
+    width: "100%",
+    marginBottom: 70,
+  },
+  headingText: {
+    fontSize: 38,
+    fontWeight: "condensedBold",
+    alignSelf: "center",
+  },
 });
 
 export default LoginScreen;
