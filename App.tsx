@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React from "react";
 import { StatusBar } from "react-native";
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
@@ -31,3 +32,4 @@ export default function App() {
     </Provider>
   );
 }
+

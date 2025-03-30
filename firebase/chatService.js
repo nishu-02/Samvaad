@@ -1,25 +1,25 @@
 import { db } from "./firebaseConfig";
 import { collection, addDoc, query, orderBy, onSnapshot } from "firebase/firestore";
 
-// Send Message
-export const sendMessage = async (userId, message) => {
+// Send message with sender and receiver
+export const sendMessage = async (message, sender, receiver) => {
   try {
     await addDoc(collection(db, "messages"), {
-      userId,
-      message,
-      timestamp: new Date(),
+      text: message,
+      sender,
+      receiver,
+      createdAt: new Date(),
     });
   } catch (error) {
     console.error("Message Error:", error.message);
   }
 };
 
-// Fetch Messages in Real-Time
-export const fetchMessages = (callback) => {
-  const messagesRef = query(collection(db, "messages"), orderBy("timestamp", "asc"));
-  
-  return onSnapshot(messagesRef, (snapshot) => {
-    const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+// Listen for messages
+export const listenMessages = (callback) => {
+  const q = query(collection(db, "messages"), orderBy("createdAt"));
+  return onSnapshot(q, (snapshot) => {
+    const messages = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     callback(messages);
   });
 };

@@ -2,15 +2,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from 'react-native-vector-icons'; // ✅ Use correct icons
+import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
 import ChatListScreen from './ChatListScreen';
 import Settings from './Settings';
 import ContactList from './ContactList';
 
+import useAuthStore from '../global/useAuthstore';
+
 const Tab = createBottomTabNavigator();
 
 const Home = ({ navigation }) => {
+    const user = useAuthStore((state) => state.user);
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

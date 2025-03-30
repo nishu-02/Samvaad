@@ -7,13 +7,14 @@ const useAuthStore = create((set) => ({
   user: null,
   loading: false,
   error: null,
+  authenticated: false,
 
   // Login function
   loginUser: async (email, password) => {
     set({ loading: true, error: null });
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      set({ user: userCredential.user, loading: false });
+      set({ user: userCredential.user, authenticated: true, loading: false });
       return userCredential.user;
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -48,7 +49,7 @@ const useAuthStore = create((set) => ({
   checkAuthState: () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        set({ user });
+        set({ user, });
       } else {
         set({ user: null });
       }

@@ -2,7 +2,6 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useState } from "react";
@@ -15,13 +14,13 @@ const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const login = useAuthStore((state) => state.login);
+  const loginUser = useAuthStore((state) => state.loginUser);
   const error = useAuthStore((state) => state.error);
   const loading = useAuthStore((state) => state.loading);
 
   const handleLogin = async () => {
     try {
-      await login(username, password);
+      await loginUser(username, password);
     } catch (err) {
       console.log(err);
     }

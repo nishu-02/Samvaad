@@ -8,12 +8,13 @@ import ChatScreen from "./screens/ChatScreen";
 import FriendProfile from "./screens/FriendProfile";
 import SearchScreen from "./screens/SearchScreen";
 import Home from "./screens/Home";
+import useAuthStore from "./global/useAuthstore";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   const initialized = true;
-  const authenticated = true;
+  const authenticated = useAuthStore((state) => state.authenticated);
 
   return (
     <Stack.Navigator>
