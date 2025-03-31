@@ -36,7 +36,7 @@ const Home = ({ navigation }) => {
         tabBarStyle: { backgroundColor: 'white' },
       })}
     >
-      <Tab.Screen name="Chat List" component={ChatListScreen} />
+      <Tab.Screen name="Chat List" component={ChatListScreen} options ={{ headerShown: false}} />
       <Tab.Screen name="Contact" component={ContactList} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>

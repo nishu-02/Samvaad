@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native'; // ✅ Fixed FlatList & TouchableOpacity import
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Searchbar, ActivityIndicator, MD2Colors } from 'react-native-paper';
@@ -17,22 +17,23 @@ const ChatListScreen = () => {
 
   useEffect(() => {
     fetchUsers();
-    console.log("Fetched users:", users);
   }, []);
 
   const handleSelectUser = (selectedUser) => {
-    navigation.navigate('ChatScreen', { receiver: selectedUser });
+    navigation.navigate('Chat', { receiver: selectedUser });
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, padding: 10 }}>
+    <SafeAreaView style={styles.container}>
+      <Text> Samvaad </Text>
       <Searchbar
         placeholder="Search"
         onChangeText={setSearchQuery}
         value={searchQuery}
-        style={{ marginBottom: 10 }}
+        style={styles.searchBar}
       />
-      <Text>Select a friend to chat with</Text>
+      <Text style={styles.header}>Select a friend to chat with</Text>
+      
       {loading ? (
         <ActivityIndicator animating={true} color={MD2Colors.red800} />
       ) : (
@@ -40,11 +41,17 @@ const ChatListScreen = () => {
           data={users.filter((user) => user.uid !== currentUser?.uid)}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleSelectUser(item)}
-              style={{ padding: 10, borderBottomWidth: 1 }}
-            >
-              <Text>{item.username || item.email}</Text>
+            <TouchableOpacity onPress={() => handleSelectUser(item)} style={styles.userContainer}>
+              <Image 
+                source={{ uri: item.profilePic || 'https://via.placeholder.com/50' }} 
+                style={styles.avatar} 
+              />
+              <View style={styles.userInfo}>
+                <Text style={styles.username}>{item.username || item.email}</Text>
+                <Text style={styles.latestMessage} numberOfLines={1}>
+                  {item.latestMessage || 'No messages yet'}
+                </Text>
+              </View>
             </TouchableOpacity>
           )}
         />
@@ -56,4 +63,24 @@ const ChatListScreen = () => {
 
 export default ChatListScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 10, backgroundColor: '#fff' },
+  searchBar: { marginBottom: 10 },
+  header: { fontSize: 16, fontWeight: 'bold', marginBottom: 10 },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  userInfo: { flex: 1 },
+  username: { fontSize: 16, fontWeight: 'bold' },
+  latestMessage: { fontSize: 14, color: 'gray' },
+});

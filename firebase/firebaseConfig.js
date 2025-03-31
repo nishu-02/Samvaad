@@ -4,7 +4,6 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 
 
-
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);

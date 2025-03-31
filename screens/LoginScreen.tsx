@@ -3,6 +3,7 @@ import {
   TextInput,
   StyleSheet,
   View,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +11,7 @@ import { Button } from "react-native-paper";
 
 import useAuthStore from "../global/useAuthstore";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -58,6 +59,9 @@ const LoginScreen = () => {
       >
         Let's begin samvaad
       </Button>
+      <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+        <Text style={{ color: "blue" }}>Create an account</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
