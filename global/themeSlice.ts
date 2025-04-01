@@ -1,30 +1,41 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { MD3DarkTheme, MD3LightTheme } from "react-native-paper";
 
-export interface ThemeState {
-  isDarkMode: boolean;
-  theme: typeof MD3DarkTheme; // Store full theme object
-}
+const CustomLightTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: "#6200ee",
+    background: "#ffffff",
+    text: "#000000",
+    button: "#6200ee",
+  },
+};
 
-const initialState: ThemeState = {
-  isDarkMode: false,
-  theme: MD3LightTheme, // Default to light mode theme
+const CustomDarkTheme = {
+  ...MD3DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    primary: "#bb86fc",
+    background: "#121212",
+    text: "#ffffff",
+    button: "#bb86fc",
+  },
 };
 
 const themeSlice = createSlice({
   name: "theme",
-  initialState,
+  initialState: {
+    isDarkMode: false,
+    theme: CustomLightTheme,
+  },
   reducers: {
     toggleTheme: (state) => {
       state.isDarkMode = !state.isDarkMode;
-      state.theme = state.isDarkMode ? MD3DarkTheme : MD3LightTheme; // Update theme object
-    },
-    setTheme: (state, action: { payload: boolean }) => {
-      state.isDarkMode = action.payload;
-      state.theme = action.payload ? MD3DarkTheme : MD3LightTheme;
+      state.theme = state.isDarkMode ? CustomDarkTheme : CustomLightTheme;
     },
   },
 });
 
-export const { toggleTheme, setTheme } = themeSlice.actions;
+export const { toggleTheme } = themeSlice.actions;
 export default themeSlice.reducer;

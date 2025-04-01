@@ -14,11 +14,12 @@ import {
   Text, 
   TextInput, 
   Surface, 
-  useTheme, 
   IconButton 
 } from "react-native-paper";
 import useChatStore from "../global/useChatStore";
 import useAuthStore from "../global/useAuthstore";
+
+import { useSelector } from "react-redux";
 
 const ChatScreen = ({ route, navigation }) => {
   const [message, setMessage] = useState("");
@@ -27,8 +28,9 @@ const ChatScreen = ({ route, navigation }) => {
   const messages = useChatStore((state) => state.messages);
   const user = useAuthStore((state) => state.user);
   const receiver = route.params.receiver;
-  const theme = useTheme();
   const flatListRef = useRef(null);
+
+  const { theme } = useSelector((state)=> state.theme);
 
   useEffect(() => {
     listenMessages();
@@ -128,7 +130,7 @@ const ChatScreen = ({ route, navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : null}
         style={styles.keyboardAvoid}
@@ -205,7 +207,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: "#FFFFFF",
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
