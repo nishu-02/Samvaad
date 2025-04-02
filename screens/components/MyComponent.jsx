@@ -6,7 +6,7 @@ const MyFAB = ({ visible = true, style, navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedFAB
-        icon="plus"
+        icon="pencil"
         label="Add"
         onPress={() => navigation.navigate('AddContact')}
         visible={visible}

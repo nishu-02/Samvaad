@@ -1,20 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
-import { 
-  View, 
-  StyleSheet, 
-  FlatList, 
-  Image, 
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Image,
   SafeAreaView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from "react-native";
-import { 
-  Appbar, 
-  Avatar, 
-  Text, 
-  TextInput, 
-  Surface, 
-  IconButton 
+import {
+  Appbar,
+  Avatar,
+  Text,
+  TextInput,
+  Surface,
+  IconButton,
 } from "react-native-paper";
 import useChatStore from "../global/useChatStore";
 import useAuthStore from "../global/useAuthstore";
@@ -30,7 +30,7 @@ const ChatScreen = ({ route, navigation }) => {
   const receiver = route.params.receiver;
   const flatListRef = useRef(null);
 
-  const { theme } = useSelector((state)=> state.theme);
+  const { theme } = useSelector((state) => state.theme);
 
   useEffect(() => {
     listenMessages();
@@ -54,55 +54,82 @@ const ChatScreen = ({ route, navigation }) => {
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const renderItem = ({ item, index }) => {
     const isUser = item.sender === user.email;
     // Check if this is the first message of the day or if the day has changed
-    const showDate = index === 0 || 
-      (index > 0 && new Date(item.timestamp).toDateString() !== 
-        new Date(filteredMessages[index - 1].timestamp).toDateString());
-    
+    const showDate =
+      index === 0 ||
+      (index > 0 &&
+        new Date(item.timestamp).toDateString() !==
+          new Date(filteredMessages[index - 1].timestamp).toDateString());
+
     return (
       <>
         {showDate && (
           <View style={styles.dateContainer}>
             <Text style={styles.dateText}>
-              {item.timestamp ? new Date(item.timestamp).toLocaleDateString() : "Today"}
+              {item.timestamp
+                ? new Date(item.timestamp).toLocaleDateString()
+                : "Today"}
             </Text>
           </View>
         )}
-        <View style={[
-          styles.messageRow,
-          isUser ? styles.userMessageRow : styles.receiverMessageRow
-        ]}>
+        <View
+          style={[
+            styles.messageRow,
+            isUser ? [styles.userMessageRow] : styles.receiverMessageRow,
+          ]}
+        >
           {!isUser && (
-            <Avatar.Image 
-              size={30} 
-              source={{ uri: receiver.avatar || "https://ui-avatars.com/api/?name=" + receiver.username }} 
+            <Avatar.Image
+              size={30}
+              source={{
+                uri:
+                  receiver.avatar ||
+                  "https://ui-avatars.com/api/?name=" + receiver.username,
+              }}
               style={styles.avatar}
             />
           )}
-          <Surface style={[
-            styles.messageBubble,
-            isUser ? styles.userBubble : styles.receiverBubble,
-            item.image && styles.imageBubble
-          ]}>
+          <Surface
+            style={[
+              styles.messageBubble,
+              isUser
+                ? [styles.userBubble, { backgroundColor: theme.colors.sender }]
+                : [
+                    styles.receiverBubble,
+                    { backgroundColor: theme.colors.receiver },
+                  ],
+              item.image && styles.imageBubble,
+            ]}
+          >
             {item.image && (
-              <Image 
-                source={{ uri: item.image }} 
-                style={styles.messageImage} 
+              <Image
+                source={{ uri: item.image }}
+                style={styles.messageImage}
                 resizeMode="cover"
               />
             )}
-            {item.text && <Text style={isUser ? styles.userMessageText : styles.receiverMessageText}>
-              {item.text}
-            </Text>}
-            <Text style={[
-              styles.timeText,
-              isUser ? styles.userTimeText : styles.receiverTimeText
-            ]}>
+            {item.text && (
+              <Text
+                style={
+                  isUser 
+                    ? [styles.userMessageText, { color: theme.colors.text }] 
+                    : [styles.receiverMessageText, { color: theme.colors.text }]
+                }
+              >
+                {item.text}
+              </Text>
+            )}
+            <Text
+              style={[
+                styles.timeText,
+                isUser ? styles.userTimeText : styles.receiverTimeText,
+              ]}
+            >
               {formatTime(item.timestamp)}
             </Text>
           </Surface>
@@ -116,33 +143,40 @@ const ChatScreen = ({ route, navigation }) => {
     return (
       <Surface style={styles.linkPreview}>
         {item.linkImage && (
-          <Image 
-            source={{ uri: item.linkImage }} 
-            style={styles.linkImage} 
-          />
+          <Image source={{ uri: item.linkImage }} style={styles.linkImage} />
         )}
         <View style={styles.linkTextContainer}>
-          <Text style={styles.linkTitle} numberOfLines={1}>{item.linkTitle}</Text>
-          <Text style={styles.linkUrl} numberOfLines={1}>{item.linkUrl}</Text>
+          <Text style={styles.linkTitle} numberOfLines={1}>
+            {item.linkTitle}
+          </Text>
+          <Text style={styles.linkUrl} numberOfLines={1}>
+            {item.linkUrl}
+          </Text>
         </View>
       </Surface>
     );
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <KeyboardAvoidingView 
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : null}
         style={styles.keyboardAvoid}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
         <Appbar.Header style={styles.header}>
           <Appbar.BackAction onPress={() => navigation.goBack()} />
-          <Avatar.Image 
-            size={40} 
-            source={{ uri: receiver.avatar || "https://ui-avatars.com/api/?name=" + receiver.username }} 
+          <Avatar.Image
+            size={40}
+            source={{
+              uri:
+                receiver.avatar ||
+                "https://ui-avatars.com/api/?name=" + receiver.username,
+            }}
           />
-          <Text style={styles.headerTitle}>
+          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
             {receiver.username || receiver.email}
           </Text>
           <Appbar.Action icon="phone" onPress={() => {}} />
@@ -155,26 +189,27 @@ const ChatScreen = ({ route, navigation }) => {
           data={filteredMessages}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          contentContainerStyle={styles.messageList}
-          onContentSizeChange={() => 
+          contentContainerStyle={[
+            styles.messageList,
+            { backgroundColor: theme.colors.background},
+          ]}
+          onContentSizeChange={() =>
             flatListRef.current?.scrollToEnd({ animated: true })
           }
-          onLayout={() => 
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
+          onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
         />
 
-        <View style={styles.inputContainer}>
-          <IconButton 
-            icon="image" 
-            size={24} 
-            onPress={() => {}} 
+        <View style={[styles.inputContainer, {backgroundColor: theme.colors.background}]}>
+          <IconButton
+            icon="image"
+            size={24}
+            onPress={() => {}}
             style={styles.attachButton}
           />
           <IconButton
-            icon="camera" 
-            size={24} 
-            onPress={() => {}} 
+            icon="camera"
+            size={24}
+            onPress={() => {}}
             style={styles.attachButton}
           />
           <TextInput
@@ -185,9 +220,9 @@ const ChatScreen = ({ route, navigation }) => {
             style={styles.input}
             outlineStyle={styles.inputOutline}
             right={
-              <TextInput.Icon 
-                icon="send" 
-                onPress={handleSend} 
+              <TextInput.Icon
+                icon="send"
+                onPress={handleSend}
                 color={theme.colors.primary}
               />
             }
@@ -201,7 +236,6 @@ const ChatScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0F2F5",
   },
   keyboardAvoid: {
     flex: 1,
@@ -241,27 +275,25 @@ const styles = StyleSheet.create({
   },
   userMessageRow: {
     justifyContent: "flex-end",
+    marginRight:10
   },
   receiverMessageRow: {
     justifyContent: "flex-start",
   },
   avatar: {
-    marginRight: 5,
+    marginRight: 10,
     marginBottom: 5,
   },
-  messageBubble: {
-    maxWidth: "75%",
-    borderRadius: 12,
-    padding: 10,
-    elevation: 1,
-  },
   userBubble: {
-    backgroundColor: "#1982FC",
-    borderBottomRightRadius: 2,
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: "transparent",
   },
   receiverBubble: {
-    backgroundColor: "#FFFFFF",
-    borderBottomLeftRadius: 2,
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: "transparent",
+    marginRight:16,
   },
   imageBubble: {
     padding: 4,
@@ -273,11 +305,24 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#e1e1e1",
   },
+  messageBubble: {
+    maxWidth: "75%",
+    borderRadius: 12,
+    padding: 10,
+    elevation: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex",
+  },
   userMessageText: {
-    color: "#FFFFFF",
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
   receiverMessageText: {
-    color: "#000000",
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
   timeText: {
     fontSize: 10,
@@ -315,16 +360,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 8,
     paddingVertical: 10,
-    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
     borderTopColor: "#E0E0E0",
+    borderTopEndRadius: 16,
+    borderTopLeftRadius: 16,
+    borderWidth: 1,
+    shadowOpacity: 5,
   },
   attachButton: {
     margin: 0,
   },
   input: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
     marginHorizontal: 4,
   },
   inputOutline: {

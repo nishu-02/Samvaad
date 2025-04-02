@@ -10,6 +10,7 @@ import SearchScreen from "./screens/SearchScreen";
 import Home from "./screens/Home";
 import useAuthStore from "./global/useAuthstore";
 import SignUpScreen from "./screens/SignUpScreen";
+import Notifications from "./screens/Notifications";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,7 +38,7 @@ const AppNavigator = () => {
           <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: true }} />
           <Stack.Screen name="FriendProfile" component={FriendProfile} options={{ headerShown: false }} />
           <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
-          
+          <Stack.Screen name="noti" component={Notifications} options = {{ headerShown: false}} />
         </>
       )}
     </Stack.Navigator>

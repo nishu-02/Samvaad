@@ -14,7 +14,7 @@ const AddContact = () => {
   const [image, setImage] = useState(null);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.primary}]}>
       <TouchableOpacity style={styles.imageContainer} onPress={() => console.log("Upload Image")}>
         {image ? (
           <Image source={{ uri: image }} style={styles.profileImage} />
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     height:200,
   },
   imagePlaceholder: {
-    backgroundColor: "#1E1E1E", // Darker shade for the placeholder
+    backgroundColor: "#1E1E1E",
     width:350,
     height:160
   },

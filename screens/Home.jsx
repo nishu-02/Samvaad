@@ -37,7 +37,7 @@ const Home = ({ navigation }) => {
       })}
     >
       <Tab.Screen name="Chat List" component={ChatListScreen} options ={{ headerShown: false}} />
-      <Tab.Screen name="Contact" component={ContactList} />
+      <Tab.Screen name="Contact" component={ContactList} options={{ headerShown:false}} />
       <Tab.Screen name="Settings" component={Settings} options = {{ headerShown: false}} />
     </Tab.Navigator>
   );

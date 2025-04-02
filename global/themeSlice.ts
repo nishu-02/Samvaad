@@ -5,10 +5,12 @@ const CustomLightTheme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#6200ee",
-    background: "#ffffff",
-    text: "#000000",
-    button: "#6200ee",
+    primary: "#1976D2",
+    background: "#F5F7FA",
+    text: "#001E3C",
+    button: "#1976D2",
+    sender: "#D6E4FF",
+    receiver: "#E7EBEF",
   },
 };
 
@@ -16,10 +18,12 @@ const CustomDarkTheme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: "#bb86fc",
+    primary: "#90CAF9",
     background: "#121212",
-    text: "#ffffff",
-    button: "#bb86fc",
+    text: "pink",
+    button: "#90CAF9",
+    sender: "#1E3A5F",
+    receiver: "#2D3B45",
   },
 };
 

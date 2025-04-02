@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet, SafeAreaView } from "react-native";
-import { 
-  Text, 
-  Avatar, 
-  Searchbar, 
-  List, 
-  Surface, 
+import {
+  Text,
+  Avatar,
+  Searchbar,
+  List,
+  Surface,
   ActivityIndicator,
-  useTheme 
 } from "react-native-paper";
 import useUserStore from "../global/useUserStore";
 import { create } from "zustand";
 import MyFAB from "./components/MyComponent";
+
+import { useSelector } from "react-redux";
 
 const useFavoritesStore = create((set) => ({
   favorites: [],
@@ -26,11 +27,12 @@ const useFavoritesStore = create((set) => ({
     }),
 }));
 
-const ContactList = () => {
+const ContactList = ({ navigation }) => {
   const { users, loading, fetchUsers } = useUserStore();
   const { favorites, toggleFavorite } = useFavoritesStore();
   const [searchQuery, setSearchQuery] = useState("");
-  const theme = useTheme();
+
+  const { theme, isDarkMode } = useSelector((state) => state.theme);
 
   useEffect(() => {
     fetchUsers();
@@ -52,16 +54,17 @@ const ContactList = () => {
 
   // Filter users based on search query
   const filteredUsers = searchQuery
-    ? allUsers.filter(user => 
-        user.name && user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ? allUsers.filter(
+        (user) =>
+          user.name &&
+          user.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : allUsers;
 
   // Group contacts by first letter of name
   const groupedContacts = filteredUsers.reduce((groups, contact) => {
-    // Ensure contact has a name property
     if (!contact.name) return groups;
-    
+
     const letter = contact.name.charAt(0).toUpperCase();
     if (!groups[letter]) {
       groups[letter] = [];
@@ -70,66 +73,104 @@ const ContactList = () => {
     return groups;
   }, {});
 
-  // Convert to array and sort alphabetically
   const sections = Object.keys(groupedContacts)
     .sort()
-    .map(letter => ({
+    .map((letter) => ({
       letter,
-      data: groupedContacts[letter].sort((a, b) => a.name.localeCompare(b.name))
+      data: groupedContacts[letter].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      ),
     }));
 
-  const onChangeSearch = query => setSearchQuery(query);
+  const onChangeSearch = (query) => setSearchQuery(query);
 
-  const renderContactItem = ({ item }) => (
-    <List.Item
-      title={item.name}
-      description={item.email}
-      onPress={() => toggleFavorite(item)}
-      left={props => (
-        <Avatar.Image
-          {...props}
-          size={40}
-          source={{ uri: `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=random` }}
-        />
-      )}
-      style={[
-        styles.contactItem,
-        favorites.some(fav => fav.id === item.id) && styles.favoriteItem
-      ]}
-    />
+  const renderContactItem = ({ item }) => {
+    const isFavorite = favorites.some((fav) => fav.id === item.id);
+    
+    return (
+      <List.Item
+        title={<Text style={{ color: theme.colors.text }}>{item.name}</Text>}
+        description={<Text style={{ color: isDarkMode ? '#aaaaaa' : '#666666' }}>{item.email}</Text>}
+        onPress={() => toggleFavorite(item)}
+        left={(props) => (
+          <Avatar.Image
+            {...props}
+            size={40}
+            source={{
+              uri: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                item.name
+              )}&background=random`,
+            }}
+          />
+        )}
+        style={[
+          styles.contactItem,
+          { backgroundColor: theme.colors.background },
+          isFavorite && { backgroundColor: isDarkMode ? theme.colors.sender : theme.colors.receiver }
+        ]}
+      />
+    );
+  };
+
+  const renderSection = ({ item }) => (
+    <View>
+      <View style={{ backgroundColor: theme.colors.background }}>
+        <Text
+          style={[
+            styles.sectionLetter,
+            { 
+              backgroundColor: theme.colors.background,
+              color: theme.colors.primary 
+            }
+          ]}
+        >
+          {item.letter}
+        </Text>
+      </View>
+
+      {item.data.map((contact) => (
+        <View key={contact.id}>{renderContactItem({ item: contact })}</View>
+      ))}
+    </View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Surface style={styles.surface}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.primary }]}
+    >
+      <Surface
+        style={[styles.surface, { backgroundColor: theme.colors.background }]}
+      >
         <Searchbar
           placeholder="Search"
           onChangeText={onChangeSearch}
           value={searchQuery}
-          style={styles.searchBar}
-          iconColor="#757575"
+          style={[
+            styles.searchBar, 
+            { backgroundColor: isDarkMode ? '#2d2d2d' : '#F3F4F6' }
+          ]}
+          iconColor={isDarkMode ? '#bbbbbb' : '#757575'}
+          inputStyle={{ color: theme.colors.text }}
+          placeholderTextColor={isDarkMode ? '#888888' : '#757575'}
         />
 
         {loading ? (
-          <ActivityIndicator animating={true} color={theme.colors.primary} style={styles.loader} />
+          <ActivityIndicator
+            animating={true}
+            color={theme.colors.primary}
+            style={styles.loader}
+          />
         ) : (
           <FlatList
             data={sections}
-            keyExtractor={item => item.letter}
-            renderItem={({ item }) => (
-              <View>
-                <Text style={styles.sectionLetter}>{item.letter}</Text>
-                {item.data.map(contact => (
-                  <View key={contact.id}>
-                    {renderContactItem({ item: contact })}
-                  </View>
-                ))}
-              </View>
-            )}
+            keyExtractor={(item) => item.letter}
+            renderItem={renderSection}
             style={styles.list}
           />
         )}
-        <MyFAB />
+        <View style={{ position: "absolute", right: 16, top: 80 }}>
+          <MyFAB navigation={navigation} />
+        </View>
       </Surface>
     </SafeAreaView>
   );
@@ -143,58 +184,28 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 16,
-    backgroundColor: "#FFFFFF"
   },
- 
   searchBar: {
-    backgroundColor: "#F3F4F6",
     elevation: 0,
     borderRadius: 12,
     marginBottom: 16,
-    height: 48
+    height: 48,
   },
   sectionLetter: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#2196F3",
-    marginVertical: 8
+    marginVertical: 8,
+    padding: 10,
   },
   contactItem: {
     paddingVertical: 8,
-    backgroundColor: "#FFFFFF"
-  },
-  favoriteItem: {
-    backgroundColor: "#FFF8E1"
   },
   loader: {
-    marginTop: 24
+    marginTop: 24,
   },
-  tabBar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
-    padding: 8
+  list: {
+    marginBottom: 50,
   },
-  tabItem: {
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  activeTab: {
-    borderTopWidth: 2,
-    borderTopColor: "#2196F3"
-  },
-  tabTitle: {
-    fontSize: 12,
-    textAlign: "center"
-  },
-  activeTabTitle: {
-    fontSize: 12,
-    textAlign: "center",
-    color: "#2196F3",
-    fontWeight: "bold"
-  }
 });
 
 export default ContactList;

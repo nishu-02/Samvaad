@@ -8,11 +8,12 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Searchbar, ActivityIndicator, MD2Colors } from "react-native-paper";
+import { Searchbar, ActivityIndicator, MD2Colors, useTheme } from "react-native-paper";
 import MyFAB from "./components/MyComponent";
 import useUserStore from "../global/useUserStore";
 import useAuthStore from "../global/useAuthstore";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 const ChatListScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +22,7 @@ const ChatListScreen = () => {
   const loading = useUserStore((state) => state.loading);
   const currentUser = useAuthStore((state) => state.user);
   const navigation = useNavigation();
+  const { theme } = useSelector((state) => state.theme);
 
   useEffect(() => {
     fetchUsers();
@@ -31,18 +33,19 @@ const ChatListScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style= {styles.header}> Samvaad </Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.header, { color: theme.colors.text }]}> Samvaad </Text>
       <Searchbar
         placeholder="Search"
         onChangeText={setSearchQuery}
         value={searchQuery}
         style={styles.searchBar}
+        iconColor={theme.colors.primary}
+        inputStyle={{ color: theme.colors.text }}
       />
-      <Text style={styles.header}>Select a friend to chat with</Text>
-
+      <Text style={[styles.subHeader, { color: theme.colors.text }]}>Select a friend to chat with</Text>
       {loading ? (
-        <ActivityIndicator animating={true} color={MD2Colors.red800} />
+        <ActivityIndicator animating={true} color={theme.colors.primary} />
       ) : (
         <FlatList
           data={users.filter((user) => user.uid !== currentUser?.uid)}
@@ -50,7 +53,7 @@ const ChatListScreen = () => {
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handleSelectUser(item)}
-              style={styles.userContainer}
+              style={[styles.userContainer, { borderBottomColor: theme.dark ? '#2D3B45' : '#E7EBEF' }]}
             >
               <Image
                 source={{
@@ -59,10 +62,13 @@ const ChatListScreen = () => {
                 style={styles.avatar}
               />
               <View style={styles.userInfo}>
-                <Text style={styles.username}>
+                <Text style={[styles.username, { color: theme.colors.text }]}>
                   {item.username || item.email}
                 </Text>
-                <Text style={styles.latestMessage} numberOfLines={1}>
+                <Text 
+                  style={[styles.latestMessage, { color: theme.dark ? '#9EA8B4' : '#4F5B67' }]} 
+                  numberOfLines={1}
+                >
                   {item.latestMessage || "No messages yet"}
                 </Text>
               </View>
@@ -70,7 +76,9 @@ const ChatListScreen = () => {
           )}
         />
       )}
-      <MyFAB navigation={navigation} />
+      <View style={{ position: "absolute", right: 16, top: 80 }}>
+        <MyFAB navigation={navigation} />
+      </View>
     </SafeAreaView>
   );
 };
@@ -78,28 +86,37 @@ const ChatListScreen = () => {
 export default ChatListScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, backgroundColor: "#fff" },
-  searchBar: { marginBottom: 10 },
-  header: { fontSize: 16, fontWeight: "bold", marginBottom: 10 },
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  searchBar: {
+    marginBottom: 10,
+    elevation: 1,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    fontWeight: "700",
+  },
+  subHeader: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginBottom: 10,
+    textAlign: "center",
+  },
   userContainer: {
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 10,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-    alignSelf:'flex',
-    fontWeight:'condensedBold',
   },
   userInfo: {
     flex: 1,
@@ -110,6 +127,5 @@ const styles = StyleSheet.create({
   },
   latestMessage: {
     fontSize: 14,
-    color: "gray",
   },
 });
