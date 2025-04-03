@@ -152,6 +152,7 @@ const ContactList = ({ navigation }) => {
           iconColor={isDarkMode ? '#bbbbbb' : '#757575'}
           inputStyle={{ color: theme.colors.text }}
           placeholderTextColor={isDarkMode ? '#888888' : '#757575'}
+          onPress={() => navigation.navigate('Search')}
         />
 
         {loading ? (
