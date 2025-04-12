@@ -8,13 +8,11 @@ import {
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
-
 import useAuthStore from "../global/useAuthstore";
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const loginUser = useAuthStore((state) => state.loginUser);
   const error = useAuthStore((state) => state.error);
   const loading = useAuthStore((state) => state.loading);
@@ -29,39 +27,50 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.heading}>
-        <Text style={styles.headingText}>Welcome!</Text>
+      <View style={styles.contentContainer}>
+        <Text style={styles.headerText}>Login</Text>
+        
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Username</Text>
+          <TextInput
+            placeholder="Username"
+            placeholderTextColor="#666"
+            onChangeText={(text) => setUsername(text)}
+            value={username}
+            style={styles.input}
+          />
+        </View>
+        
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#666"
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            secureTextEntry={true}
+            style={styles.input}
+          />
+        </View>
+        
+        <Button
+          mode="contained"
+          onPress={handleLogin}
+          loading={loading}
+          style={styles.loginButton}
+          contentStyle={styles.buttonContent}
+          labelStyle={styles.buttonLabel}
+        >
+          Login
+        </Button>
+
+        <TouchableOpacity 
+          onPress={() => navigation.navigate("SignUp")}
+          style={styles.createAccountContainer}
+        >
+          <Text style={styles.createAccountText}>Create an account</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={styles.label}>Enter your Email:</Text>
-
-      <TextInput
-        placeholder="Enter your Email"
-        onChangeText={(text) => setUsername(text)}
-        value={username}
-        style={styles.input}
-      />
-
-      <Text style={styles.label}>Enter your password</Text>
-      <TextInput
-        placeholder="Do you remember it..."
-        onChangeText={(text) => setPassword(text)}
-        value={password}
-        secureTextEntry={true}
-        style={styles.input}
-      />
-
-      <Button
-        icon="login"
-        mode="contained"
-        onPress={handleLogin}
-        theme={{ colors: { primary: "thistle" } }}
-        style={{ marginTop: 16 }}
-      >
-        Let's begin samvaad
-      </Button>
-      <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-        <Text style={{ color: "blue" }}>Create an account</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -69,45 +78,60 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: "#121212",
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
     justifyContent: "center",
-    backgroundColor: "beige",
+    paddingBottom: 80,
+  },
+  headerText: {
+    fontSize: 28,
+    fontWeight: "500",
+    color: "white",
+    marginBottom: 40,
+    textAlign: "center",
+  },
+  inputGroup: {
+    marginBottom: 20,
   },
   label: {
-    paddingLeft: 10,
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: 14,
+    color: "white",
+    marginBottom: 8,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 16,
-    marginBottom: 20,
     height: 50,
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 6,
+    paddingHorizontal: 15,
+    color: "#999",
+    backgroundColor: "#121212",
   },
   loginButton: {
-    height: 100,
-    width: 100,
-    backgroundColor: "teal",
-    borderRadius: 23,
-    borderWidth: 1,
-    borderColor: "black",
+    marginTop: 10,
+    height: 50,
     justifyContent: "center",
-    alignContent: "center",
+    borderRadius: 25,
+    backgroundColor: "#1976D2",
   },
-  heading: {
-    height: 100,
-    justifyContent: "center",
-    alignContent: "center",
-    width: "100%",
-    marginBottom: 70,
+  buttonContent: {
+    height: 50,
   },
-  headingText: {
-    fontSize: 38,
-    fontWeight: "condensedBold",
-    alignSelf: "center",
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: "500"
   },
+  createAccountContainer: {
+    marginTop: 20,
+    alignItems: "center"
+  },
+  createAccountText: {
+    color: "#1976D2",
+    fontSize: 14
+  }
 });
 
 export default LoginScreen;

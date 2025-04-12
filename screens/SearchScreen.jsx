@@ -1,49 +1,85 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
-import { Searchbar, Text, Avatar, Chip, ActivityIndicator, Divider } from 'react-native-paper';
-import { useSelector } from 'react-redux';
-import Icon from 'react-native-vector-icons/Feather';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
+import {
+  Searchbar,
+  Text,
+  Avatar,
+  Chip,
+  ActivityIndicator,
+  Divider,
+} from "react-native-paper";
+import { useSelector } from "react-redux";
+import Icon from "react-native-vector-icons/Feather";
 
 const SearchScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [recentSearches, setRecentSearches] = useState([
-    'John Doe', 'Chat app', 'React Native', 'UI design'
+    "John Doe",
+    "Chat app",
+    "React Native",
+    "UI design",
   ]);
 
   const { theme, isDarkMode } = useSelector((state) => state.theme);
   const colors = theme.colors;
 
   const dummyContacts = [
-    { id: '1', name: 'Alex Johnson', status: 'online', image: 'https://ui-avatars.com/api/?name=AJ&background=random' },
-    { id: '2', name: 'Jamie Smith', status: 'offline', image: 'https://ui-avatars.com/api/?name=JS&background=random' },
-    { id: '3', name: 'Morgan Taylor', status: 'online', image: 'https://ui-avatars.com/api/?name=MT&background=random' },
-    { id: '4', name: 'Casey Wilson', status: 'away', image: 'https://ui-avatars.com/api/?name=CW&background=random' },
+    {
+      id: "1",
+      name: "Alex Johnson",
+      status: "online",
+      image: "https://ui-avatars.com/api/?name=AJ&background=random",
+    },
+    {
+      id: "2",
+      name: "Jamie Smith",
+      status: "offline",
+      image: "https://ui-avatars.com/api/?name=JS&background=random",
+    },
+    {
+      id: "3",
+      name: "Morgan Taylor",
+      status: "online",
+      image: "https://ui-avatars.com/api/?name=MT&background=random",
+    },
+    {
+      id: "4",
+      name: "Casey Wilson",
+      status: "away",
+      image: "https://ui-avatars.com/api/?name=CW&background=random",
+    },
   ];
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    
-    if (query.trim() === '') {
+
+    if (query.trim() === "") {
       setSearchResults([]);
       setIsSearching(false);
       return;
     }
-    
+
     setIsSearching(true);
-    
+
     // Simulate API call delay
     setTimeout(() => {
-      const results = dummyContacts.filter(
-        contact => contact.name.toLowerCase().includes(query.toLowerCase())
+      const results = dummyContacts.filter((contact) =>
+        contact.name.toLowerCase().includes(query.toLowerCase())
       );
       setSearchResults(results);
       setIsSearching(false);
-      
+
       // Add to recent searches if not already there
-      if (query.trim() !== '' && !recentSearches.includes(query)) {
-        setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
+      if (query.trim() !== "" && !recentSearches.includes(query)) {
+        setRecentSearches((prev) => [query, ...prev.slice(0, 4)]);
       }
     }, 500);
   };
@@ -53,51 +89,57 @@ const SearchScreen = () => {
   };
 
   const renderSearchResult = ({ item }) => (
-    <TouchableOpacity 
-      style={[
-        styles.resultItem, 
-        { backgroundColor: colors.background }
-      ]}
+    <TouchableOpacity
+      style={[styles.resultItem, { backgroundColor: colors.background }]}
     >
       <Avatar.Image source={{ uri: item.image }} size={50} />
       <View style={styles.resultInfo}>
-        <Text style={{ color: colors.text, fontSize: 16, fontWeight: '500' }}>
+        <Text style={{ color: colors.text, fontSize: 16, fontWeight: "500" }}>
           {item.name}
         </Text>
-        <Text style={{ color: isDarkMode ? '#aaaaaa' : '#666666' }}>
-          {item.status === 'online' ? 'Active now' : 
-           item.status === 'away' ? 'Away' : 'Last seen 2h ago'}
+        <Text style={{ color: isDarkMode ? "#aaaaaa" : "#666666" }}>
+          {item.status === "online"
+            ? "Active now"
+            : item.status === "away"
+            ? "Away"
+            : "Last seen 2h ago"}
         </Text>
       </View>
-      <Icon 
-        name="message-circle" 
-        size={24} 
-        color={colors.button} 
-      />
+      <Icon name="message-circle" size={24} color={colors.button} />
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.primary }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.primary }]}
+    >
       <View style={[styles.content, { backgroundColor: colors.background }]}>
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text }]}>Search</Text>
         </View>
-        
+
         <Searchbar
           placeholder="Search people, chats, messages..."
-          onChangeText={handleSearch}
-          value={searchQuery}
+          value=""
           style={[
-            styles.searchbar,
-            { backgroundColor: isDarkMode ? '#222222' : '#F0F0F0' }
+            styles.searchBar,
+            {
+              backgroundColor: theme.dark ? "#333333" : "#EFEFF4",
+              height: 45,
+            },
           ]}
-          iconColor={colors.button}
-          inputStyle={{ color: colors.text }}
-          placeholderTextColor={isDarkMode ? '#888888' : '#757575'}
-          clearButtonMode="while-editing"
+          inputStyle={{
+            color: theme.colors.text,
+            alignSelf: "center",
+            padding: 0,
+            margin: 0,
+            height: 40,
+          }}
+          iconColor={theme.dark ? "#999999" : "#8E8E93"}
+          placeholderTextColor={theme.dark ? "#999999" : "#8E8E93"}
+          editable={false}
         />
-        
+
         {isSearching ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.button} />
@@ -106,9 +148,11 @@ const SearchScreen = () => {
           <FlatList
             data={searchResults}
             renderItem={renderSearchResult}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             ItemSeparatorComponent={() => (
-              <Divider style={{ backgroundColor: isDarkMode ? '#333333' : '#e0e0e0' }} />
+              <Divider
+                style={{ backgroundColor: isDarkMode ? "#333333" : "#e0e0e0" }}
+              />
             )}
             contentContainerStyle={styles.resultsList}
           />
@@ -124,7 +168,7 @@ const SearchScreen = () => {
                 </TouchableOpacity>
               )}
             </View>
-            
+
             <View style={styles.chipContainer}>
               {recentSearches.length > 0 ? (
                 recentSearches.map((search, index) => (
@@ -134,10 +178,10 @@ const SearchScreen = () => {
                     onPress={() => handleSearch(search)}
                     style={[
                       styles.chip,
-                      { 
-                        backgroundColor: isDarkMode ? '#222222' : '#F0F0F0',
-                        borderColor: isDarkMode ? '#444444' : '#E0E0E0'
-                      }
+                      {
+                        backgroundColor: isDarkMode ? "#222222" : "#F0F0F0",
+                        borderColor: isDarkMode ? "#444444" : "#E0E0E0",
+                      },
                     ]}
                     textStyle={{ color: colors.text }}
                   >
@@ -145,12 +189,12 @@ const SearchScreen = () => {
                   </Chip>
                 ))
               ) : (
-                <Text style={{ color: isDarkMode ? '#888888' : '#757575' }}>
+                <Text style={{ color: isDarkMode ? "#888888" : "#757575" }}>
                   No recent searches
                 </Text>
               )}
             </View>
-            
+
             <View style={styles.suggestionsContainer}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>
                 Suggested
@@ -158,9 +202,13 @@ const SearchScreen = () => {
               <FlatList
                 data={dummyContacts.slice(0, 2)}
                 renderItem={renderSearchResult}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={() => (
-                  <Divider style={{ backgroundColor: isDarkMode ? '#333333' : '#e0e0e0' }} />
+                  <Divider
+                    style={{
+                      backgroundColor: isDarkMode ? "#333333" : "#e0e0e0",
+                    }}
+                  />
                 )}
               />
             </View>
@@ -186,7 +234,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 34,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   searchbar: {
@@ -197,15 +245,15 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   resultsList: {
     paddingTop: 8,
   },
   resultItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 12,
     borderRadius: 8,
   },
@@ -217,19 +265,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   recentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 8,
     marginBottom: 16,
   },
   recentTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   chipContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginBottom: 24,
   },
   chip: {
@@ -240,7 +288,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
-  }
+  },
 });

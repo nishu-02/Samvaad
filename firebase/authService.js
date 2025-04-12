@@ -2,7 +2,6 @@ import { auth, db } from "./firebaseConfig";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 
-
 // Sign Up
 export const registerUser = async (email, password, username) => {
   try {

@@ -116,8 +116,8 @@ const ChatScreen = ({ route, navigation }) => {
             {item.text && (
               <Text
                 style={
-                  isUser 
-                    ? [styles.userMessageText, { color: theme.colors.text }] 
+                  isUser
+                    ? [styles.userMessageText, { color: theme.colors.text }]
                     : [styles.receiverMessageText, { color: theme.colors.text }]
                 }
               >
@@ -181,7 +181,12 @@ const ChatScreen = ({ route, navigation }) => {
           </Text>
           <Appbar.Action icon="phone" onPress={() => {}} />
           <Appbar.Action icon="magnify" onPress={() => {}} />
-          <Appbar.Action icon="dots-vertical" onPress={() => {}} />
+          <Appbar.Action
+            icon="account-circle"
+            onPress={() =>
+              navigation.navigate("FriendProfile", { receiver: receiver })
+            }
+          />
         </Appbar.Header>
 
         <FlatList
@@ -191,7 +196,7 @@ const ChatScreen = ({ route, navigation }) => {
           renderItem={renderItem}
           contentContainerStyle={[
             styles.messageList,
-            { backgroundColor: theme.colors.background},
+            { backgroundColor: theme.colors.background },
           ]}
           onContentSizeChange={() =>
             flatListRef.current?.scrollToEnd({ animated: true })
@@ -199,7 +204,12 @@ const ChatScreen = ({ route, navigation }) => {
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
         />
 
-        <View style={[styles.inputContainer, {backgroundColor: theme.colors.background}]}>
+        <View
+          style={[
+            styles.inputContainer,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
           <IconButton
             icon="image"
             size={24}
@@ -275,7 +285,7 @@ const styles = StyleSheet.create({
   },
   userMessageRow: {
     justifyContent: "flex-end",
-    marginRight:10
+    marginRight: 10,
   },
   receiverMessageRow: {
     justifyContent: "flex-start",
@@ -293,7 +303,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 1,
     borderColor: "transparent",
-    marginRight:16,
+    marginRight: 16,
   },
   imageBubble: {
     padding: 4,

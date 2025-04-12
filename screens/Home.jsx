@@ -1,23 +1,26 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from 'react-native-vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import ChatListScreen from './ChatListScreen';
 import Settings from './Settings';
 import ContactList from './ContactList';
 
 import useAuthStore from '../global/useAuthstore';
+import { useTheme } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
 const Home = ({ navigation }) => {
-    const user = useAuthStore((state) => state.user);
-  
+  const user = useAuthStore((state) => state.user);
+  const { colors } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -29,16 +32,25 @@ const Home = ({ navigation }) => {
             iconName = 'cog-outline';
           }
 
-          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          return (
+            <MaterialCommunityIcons name={iconName} size={size} color={color} />
+          );
         },
-        tabBarActiveTintColor: '#3366FF',
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: { backgroundColor: 'white' },
+        tabBarActiveTintColor: colors.primary,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          borderTopColor: colors.backdrop,
+          borderTopWidth: 0.5,
+          
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+        },
       })}
     >
-      <Tab.Screen name="Chat List" component={ChatListScreen} options ={{ headerShown: false}} />
-      <Tab.Screen name="Contact" component={ContactList} options={{ headerShown:false}} />
-      <Tab.Screen name="Settings" component={Settings} options = {{ headerShown: false}} />
+      <Tab.Screen name="Chat List" component={ChatListScreen} />
+      <Tab.Screen name="Contact" component={ContactList} />
+      <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
 };

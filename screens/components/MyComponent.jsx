@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   fabStyle: {
     position: 'absolute',
-    bottom: -690,
-    right: 26,
+    bottom: 16,
+    right: 16,
   },
 });

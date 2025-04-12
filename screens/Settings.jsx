@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   SafeAreaView,
   View,
   StyleSheet,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../global/themeSlice";
-import { Switch, Text, Divider, Appbar } from "react-native-paper";
+import { Text, Divider, Appbar, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Feather";
+import useUserStore from "../global/useUserStore";
 import useAuthStore from "../global/useAuthstore";
 
 const Settings = ({ navigation }) => {
@@ -17,14 +19,22 @@ const Settings = ({ navigation }) => {
 
   const { theme, isDarkMode } = useSelector((state) => state.theme);
   const colors = theme.colors;
+  
+  // Get current user email from auth store
+  const currentUserEmail = useAuthStore(state => state.user?.email);
+  
+  // Get users from user store
+  const { users, loading, fetchUsers } = useUserStore();
+  
+  // Find the current user from the users array
+  const currentUser = users.find(user => user.email === currentUserEmail) || {};
 
-  const user = useAuthStore((state) => state.user);
-
-  const menuItems = [
-    { icon: "lock", title: "Privacy" },
-    { icon: "cloud", title: "Storage & Data" },
-    { icon: "help-circle", title: "About" },
-  ];
+  useEffect(() => {
+    // Fetch users when component mounts if they're not already loaded
+    if (users.length === 0) {
+      fetchUsers();
+    }
+  }, []);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.primary }]}>
@@ -34,9 +44,8 @@ const Settings = ({ navigation }) => {
           <View style={styles.actionButtons}>
             <Appbar.Action 
               icon="magnify" 
-              onPress={() => {}} 
-              color={colors.text} 
               onPress={() => navigation.navigate('Search')}
+              color={colors.text} 
             />
             <Appbar.Action 
               icon="dots-vertical" 
@@ -48,87 +57,110 @@ const Settings = ({ navigation }) => {
 
         <View style={styles.profileContainer}>
           <Image
-            source={{ uri: user.profileImage }}
+            source={{ uri: currentUser.profileImage || 'https://via.placeholder.com/50' }}
             style={styles.profileImage}
           />
           <View style={styles.userInfo}>
             <Text style={[styles.username, { color: colors.text }]}>
-              {user.username}
+              {currentUser.username || 'Daniel'}
             </Text>
-            <Text style={[styles.email, { color: isDarkMode ? '#aaaaaa' : '#666666' }]}>
-              {user.email}
+            <Text style={[styles.phoneNumber, { color: isDarkMode ? '#aaaaaa' : '#666666' }]}>
+              {currentUser.phone || '+14844578842'}
             </Text>
           </View>
+          <Button 
+            mode="outlined" 
+            style={styles.editButton}
+            labelStyle={[styles.editButtonText, { color: colors.text }]}
+            onPress={() => {}}
+          >
+            Edit
+          </Button>
         </View>
 
-        <Divider style={[styles.divider, { backgroundColor: isDarkMode ? '#333333' : '#e0e0e0' }]} />
+        <Text style={[styles.categoryHeader, { color: isDarkMode ? '#aaaaaa' : '#666666' }]}>
+          General
+        </Text>
 
-        <TouchableOpacity style={styles.menuItem}>
-          <Icon
-            name="moon"
-            size={24}
-            color={colors.text}
-            style={styles.menuIcon}
-          />
-          <Text style={[styles.menuItemText, { color: colors.text }]}>
-            Dark Mode
+        <ScrollView style={styles.menuContainer}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('noti')}
+          >
+            <Icon
+              name="bell"
+              size={22}
+              color={colors.text}
+              style={styles.menuIcon}
+            />
+            <Text style={[styles.menuItemText, { color: colors.text }]}>
+              Notifications
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => dispatch(toggleTheme())}
+          >
+            <Icon
+              name="moon"
+              size={22}
+              color={colors.text}
+              style={styles.menuIcon}
+            />
+            <Text style={[styles.menuItemText, { color: colors.text }]}>
+              Appearance
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.menuItem}
+          >
+            <Icon
+              name="lock"
+              size={22}
+              color={colors.text}
+              style={styles.menuIcon}
+            />
+            <Text style={[styles.menuItemText, { color: colors.text }]}>
+              Privacy
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.menuItem}
+          >
+            <Icon
+              name="cloud"
+              size={22}
+              color={colors.text}
+              style={styles.menuIcon}
+            />
+            <Text style={[styles.menuItemText, { color: colors.text }]}>
+              Storage & Data
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.menuItem}
+          >
+            <Icon
+              name="help-circle"
+              size={22}
+              color={colors.text}
+              style={styles.menuIcon}
+            />
+            <Text style={[styles.menuItemText, { color: colors.text }]}>
+              About
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+        
+        {loading && (
+          <Text style={[styles.loadingText, { color: colors.text }]}>
+            Loading user data...
           </Text>
-          <Switch
-            value={isDarkMode}
-            onValueChange={() => dispatch(toggleTheme())}
-            color={colors.button}
-            style={styles.switch}
-          />
-        </TouchableOpacity>
-
-        <Divider style={[styles.divider, { backgroundColor: isDarkMode ? '#333333' : '#e0e0e0' }]} />
-
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('noti')}
-        >
-          <Icon
-            name="bell"
-            size={24}
-            color={colors.text}
-            style={styles.menuIcon}
-          />
-          <Text style={[styles.menuItemText, { color: colors.text }]}>
-            Notifications
-          </Text>
-          <Icon
-            name="chevron-right"
-            size={20}
-            color={isDarkMode ? '#aaaaaa' : '#666666'}
-          />
-        </TouchableOpacity>
-
-        <Divider style={[styles.divider, { backgroundColor: isDarkMode ? '#333333' : '#e0e0e0' }]} />
-
-        {/* Menu Items */}
-        {menuItems.map((item, index) => (
-          <React.Fragment key={index}>
-            <TouchableOpacity style={styles.menuItem}>
-              <Icon
-                name={item.icon}
-                size={24}
-                color={colors.text}
-                style={styles.menuIcon}
-              />
-              <Text style={[styles.menuItemText, { color: colors.text }]}>
-                {item.title}
-              </Text>
-              <Icon
-                name="chevron-right"
-                size={20}
-                color={isDarkMode ? '#aaaaaa' : '#666666'}
-              />
-            </TouchableOpacity>
-            {index < menuItems.length - 1 && (
-              <Divider style={[styles.divider, { backgroundColor: isDarkMode ? '#333333' : '#e0e0e0' }]} />
-            )}
-          </React.Fragment>
-        ))}
+        )}
       </View>
     </SafeAreaView>
   );
@@ -140,16 +172,17 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
   },
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingTop: 10,
     marginBottom: 20,
   },
   headerText: {
-    fontSize: 34,
+    fontSize: 30,
     fontWeight: 'bold',
   },
   actionButtons: {
@@ -158,12 +191,12 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 30,
   },
   profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     marginRight: 15,
   },
   userInfo: {
@@ -171,30 +204,49 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "600",
   },
-  email: {
+  phoneNumber: {
     fontSize: 14,
+    marginTop: 2,
   },
-  divider: {
-    marginVertical: 10,
-    height: 1,
+  editButton: {
+    borderRadius: 20,
+    borderColor: '#3E4958',
+    height: 36,
+  },
+  editButtonText: {
+    fontSize: 14,
+    marginVertical: 0,
+    marginHorizontal: 10,
+  },
+  categoryHeader: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 16,
+  },
+  menuContainer: {
+    flex: 1,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   menuIcon: {
     marginRight: 15,
+    width: 24,
+    textAlign: 'center',
   },
   menuItemText: {
     fontSize: 16,
     flex: 1,
   },
-  switch: {
-    transform: [{ scale: 1.1 }],
-  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontStyle: 'italic',
+  }
 });
 
 export default Settings;
