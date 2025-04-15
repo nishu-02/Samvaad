@@ -1,80 +1,119 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { TextInput, Button, Avatar, useTheme } from "react-native-paper";
+import { TextInput, Button, Avatar, Text } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useSelector } from "react-redux";
 
 const AddContact = () => {
-  const theme = useTheme();
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [image, setImage] = useState(null);
+  
+  // Using global theme state from Redux
+  const { theme } = useSelector((state) => state.theme);
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.primary}]}>
-      <TouchableOpacity style={styles.imageContainer} onPress={() => console.log("Upload Image")}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <TouchableOpacity 
+        style={styles.imageContainer} 
+        onPress={() => console.log("Upload Image")}
+      >
         {image ? (
           <Image source={{ uri: image }} style={styles.profileImage} />
         ) : (
-          <Avatar.Icon size={80} icon="image" style={styles.imagePlaceholder} />
+          <View style={[styles.imagePlaceholder, { backgroundColor: theme.colors.surface }]}>
+            <Icon name="image-plus" size={24} color={theme.colors.primary} />
+          </View>
         )}
       </TouchableOpacity>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          label="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-          mode="outlined"
-          left={<TextInput.Icon icon="account" />}
-          style={styles.input}
-        />
-        <TextInput
-          label="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-          mode="outlined"
-          left={<TextInput.Icon icon="account" />}
-          style={styles.input}
-        />
-        <TextInput
-          label="Phone"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          mode="outlined"
-          left={<TextInput.Icon icon="phone" />}
-          style={styles.input}
-        />
-        <TextInput
-          label="Address"
-          value={address}
-          onChangeText={setAddress}
-          mode="outlined"
-          left={<TextInput.Icon icon="map-marker" />}
-          style={styles.input}
-        />
-        <TextInput
-          label="City"
-          value={city}
-          onChangeText={setCity}
-          mode="outlined"
-          left={<TextInput.Icon icon="city" />}
-          style={styles.input}
-        />
+      <View style={styles.inputsWrapper}>
+        <View style={styles.inputRow}>
+          <Icon name="account" size={24} color={theme.colors.text} style={styles.inputIcon} />
+          <TextInput
+            label="First name"
+            value={firstName}
+            onChangeText={setFirstName}
+            mode="outlined"
+            style={[styles.input, { backgroundColor: theme.colors.surface }]}
+            outlineColor="transparent"
+            activeOutlineColor={theme.colors.primary}
+            textColor={theme.colors.text}
+          />
+        </View>
+
+        <View style={styles.inputRow}>
+          <Icon name="account" size={24} color="transparent" style={styles.inputIcon} />
+          <TextInput
+            label="Last name"
+            value={lastName}
+            onChangeText={setLastName}
+            mode="outlined"
+            style={[styles.input, { backgroundColor: theme.colors.surface }]}
+            outlineColor="transparent"
+            activeOutlineColor={theme.colors.primary}
+            textColor={theme.colors.text}
+          />
+        </View>
+
+        <View style={styles.inputRow}>
+          <Icon name="phone" size={24} color={theme.colors.text} style={styles.inputIcon} />
+          <TextInput
+            label="Phone"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            mode="outlined"
+            style={[styles.input, { backgroundColor: theme.colors.surface }]}
+            outlineColor="transparent"
+            activeOutlineColor={theme.colors.primary}
+            textColor={theme.colors.text}
+          />
+        </View>
+
+        <View style={styles.inputRow}>
+          <Icon name="map-marker" size={24} color={theme.colors.text} style={styles.inputIcon} />
+          <TextInput
+            label="Address"
+            value={address}
+            onChangeText={setAddress}
+            mode="outlined"
+            style={[styles.input, { backgroundColor: theme.colors.surface }]}
+            outlineColor="transparent"
+            activeOutlineColor={theme.colors.primary}
+            textColor={theme.colors.text}
+          />
+        </View>
+
+        <View style={styles.inputRow}>
+          <Icon name="city" size={24} color="transparent" style={styles.inputIcon} />
+          <TextInput
+            label="City"
+            value={city}
+            onChangeText={setCity}
+            mode="outlined"
+            style={[styles.input, { backgroundColor: theme.colors.surface }]}
+            outlineColor="transparent"
+            activeOutlineColor={theme.colors.primary}
+            textColor={theme.colors.text}
+          />
+        </View>
       </View>
 
-      <Button mode="contained" onPress={() => console.log("Contact Saved")} style={styles.button}>
+      <Button 
+        mode="contained" 
+        onPress={() => console.log("Contact Saved")} 
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        labelStyle={{ color: theme.colors.onPrimary }}
+      >
         Save Contact
       </Button>
     </SafeAreaView>
   );
 };
-
-export default AddContact;
 
 const styles = StyleSheet.create({
   container: {
@@ -82,30 +121,44 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   imageContainer: {
-    justifyContent:'center',
     alignItems: "center",
-    marginBottom: 30,
-    height:200,
+    justifyContent: "center",
+    marginBottom: 20,
+    paddingVertical: 40,
   },
   imagePlaceholder: {
-    backgroundColor: "#1E1E1E",
-    width:350,
-    height:160
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileImage: {
-    borderRadius: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
-  inputContainer: {
-    marginTop:19,
+  inputsWrapper: {
     marginBottom: 30,
-    borderRadius:14,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  inputIcon: {
+    marginRight: 10,
+    width: 24,
   },
   input: {
-    
-    marginBottom: 30,
-    borderRadius:34,
+    flex: 1,
+    height: 50,
+    borderRadius: 10,
   },
   button: {
-    marginTop: 10,
-  },
+    paddingVertical: 6,
+    borderRadius: 8,
+  }
 });
+
+export default AddContact;

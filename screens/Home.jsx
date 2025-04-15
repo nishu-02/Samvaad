@@ -1,21 +1,20 @@
 import { StyleSheet } from 'react-native';
 import React from 'react';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSelector } from 'react-redux';
+import { IconButton } from 'react-native-paper';
 
 import ChatListScreen from './ChatListScreen';
 import Settings from './Settings';
 import ContactList from './ContactList';
 
 import useAuthStore from '../global/useAuthstore';
-import { useTheme } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
 const Home = ({ navigation }) => {
   const user = useAuthStore((state) => state.user);
-  const { colors } = useTheme();
+  const { theme } = useSelector((state) => state.theme);
 
   return (
     <Tab.Navigator
@@ -24,37 +23,67 @@ const Home = ({ navigation }) => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'Chat List') {
-            iconName = 'message-text-outline';
-          } else if (route.name === 'Contact') {
-            iconName = 'account-group-outline';
+          if (route.name === 'Chats') {
+            iconName = 'home';
+          } else if (route.name === 'Contacts') {
+            iconName = 'account-group';
           } else if (route.name === 'Settings') {
-            iconName = 'cog-outline';
+            iconName = 'cog';
           }
 
           return (
-            <MaterialCommunityIcons name={iconName} size={size} color={color} />
+            <IconButton
+              icon={iconName}
+              size={size - 2}
+              iconColor={color}
+              style={styles.icon}
+            />
           );
         },
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.text,
         tabBarStyle: {
-          backgroundColor: colors.background,
-          borderTopColor: colors.backdrop,
+          backgroundColor: theme.colors.background,
+          borderTopColor: theme.colors.border,
           borderTopWidth: 0.5,
-          
+          height: 60,
         },
         tabBarLabelStyle: {
           fontSize: 12,
+          marginBottom: 5,
         },
       })}
     >
-      <Tab.Screen name="Chat List" component={ChatListScreen} />
-      <Tab.Screen name="Contact" component={ContactList} />
-      <Tab.Screen name="Settings" component={Settings} />
+      <Tab.Screen 
+        name="Chats" 
+        component={ChatListScreen} 
+        options={{
+          tabBarLabel: 'Chats'
+        }}
+      />
+      <Tab.Screen 
+        name="Contacts" 
+        component={ContactList}
+        options={{
+          tabBarLabel: 'Contacts'
+        }}
+      />
+      <Tab.Screen 
+        name="Settings" 
+        component={Settings}
+        options={{
+          tabBarLabel: 'Settings'
+        }}
+      />
     </Tab.Navigator>
   );
 };
 
 export default Home;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  icon: {
+    margin: 0,
+    padding: 0,
+  }
+});

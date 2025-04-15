@@ -43,7 +43,7 @@ const ChatScreen = ({ route, navigation }) => {
     }
   };
 
-  // Filter messages between current user and receiver~
+  // Filter messages between current user and receiver
   const filteredMessages = messages.filter(
     (msg) =>
       (msg.sender === user.email && msg.receiver === receiver.email) ||
@@ -80,7 +80,7 @@ const ChatScreen = ({ route, navigation }) => {
         <View
           style={[
             styles.messageRow,
-            isUser ? [styles.userMessageRow] : styles.receiverMessageRow,
+            isUser ? styles.userMessageRow : styles.receiverMessageRow,
           ]}
         >
           {!isUser && (
@@ -115,11 +115,12 @@ const ChatScreen = ({ route, navigation }) => {
             )}
             {item.text && (
               <Text
-                style={
+                style={[
+                  styles.messageText,
                   isUser
-                    ? [styles.userMessageText, { color: theme.colors.text }]
-                    : [styles.receiverMessageText, { color: theme.colors.text }]
-                }
+                    ? { color: theme.colors.text }
+                    : { color: theme.colors.text }
+                ]}
               >
                 {item.text}
               </Text>
@@ -135,25 +136,6 @@ const ChatScreen = ({ route, navigation }) => {
           </Surface>
         </View>
       </>
-    );
-  };
-
-  const renderLinkPreview = (item) => {
-    if (!item.link) return null;
-    return (
-      <Surface style={styles.linkPreview}>
-        {item.linkImage && (
-          <Image source={{ uri: item.linkImage }} style={styles.linkImage} />
-        )}
-        <View style={styles.linkTextContainer}>
-          <Text style={styles.linkTitle} numberOfLines={1}>
-            {item.linkTitle}
-          </Text>
-          <Text style={styles.linkUrl} numberOfLines={1}>
-            {item.linkUrl}
-          </Text>
-        </View>
-      </Surface>
     );
   };
 
@@ -285,7 +267,6 @@ const styles = StyleSheet.create({
   },
   userMessageRow: {
     justifyContent: "flex-end",
-    marginRight: 10,
   },
   receiverMessageRow: {
     justifyContent: "flex-start",
@@ -294,16 +275,20 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 5,
   },
+  messageBubble: {
+    maxWidth: "75%",
+    borderRadius: 18,
+    padding: 10,
+    elevation: 1,
+    height: "auto",
+  },
   userBubble: {
-    borderRadius: 26,
-    borderWidth: 1,
-    borderColor: "transparent",
+    marginLeft: 10,
+    borderTopRightRadius: 4,
   },
   receiverBubble: {
-    borderRadius: 26,
-    borderWidth: 1,
-    borderColor: "transparent",
-    marginRight: 16,
+    marginRight: 10,
+    borderTopLeftRadius: 4,
   },
   imageBubble: {
     padding: 4,
@@ -315,24 +300,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#e1e1e1",
   },
-  messageBubble: {
-    maxWidth: "75%",
-    borderRadius: 12,
-    padding: 10,
-    elevation: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
-  },
-  userMessageText: {
-    textAlign: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  receiverMessageText: {
-    textAlign: "center",
-    justifyContent: "center",
-    alignItems: "center",
+  messageText: {
+    fontSize: 16,
+    lineHeight: 22,
   },
   timeText: {
     fontSize: 10,
@@ -345,26 +315,6 @@ const styles = StyleSheet.create({
   receiverTimeText: {
     color: "rgba(0,0,0,0.5)",
   },
-  linkPreview: {
-    margin: 5,
-    borderRadius: 8,
-    overflow: "hidden",
-  },
-  linkImage: {
-    width: "100%",
-    height: 120,
-  },
-  linkTextContainer: {
-    padding: 8,
-  },
-  linkTitle: {
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-  linkUrl: {
-    fontSize: 12,
-    color: "#777",
-  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -372,10 +322,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderTopWidth: 1,
     borderTopColor: "#E0E0E0",
-    borderTopEndRadius: 16,
-    borderTopLeftRadius: 16,
-    borderWidth: 1,
-    shadowOpacity: 5,
   },
   attachButton: {
     margin: 0,
